@@ -1,0 +1,25 @@
+<html>
+    <head>
+        <script type="module" src="./scripts/app.js"></script>
+        <link href="./styles/index.css" rel="stylesheet" type="text/css"></link>
+    </head>
+    <body>
+        <svg id="boundaryOverlay" class="boundaryOverlay" xmlns="http://www.w3.org/2000/svg" version="1.1"></svg>
+        <div id="background" class="background"></div>
+        <svg id="userOverlay" class="boundaryOverlay" xmlns="http://www.w3.org/2000/svg" version="1.1"></svg>
+        <div class="scoreboard">
+            <div class = "row red">
+                <div class="member">Total:</div>
+                <div class="member" id="totalPointsCounter">0</div>
+            </div>
+            <div class = "row orange">
+                <div class="member">Found:</div>
+                <div class="member" id="foundPointsCounter"></div>
+            </div>
+            <div class = "row green">
+                <div class="member">Highlighted:</div>
+                <div class="member" id="highlightedPointsCounter"></div>
+            </div>
+        </div>
+    </body>
+</html>

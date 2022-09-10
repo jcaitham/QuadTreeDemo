@@ -1,0 +1,102 @@
+
+$Green: #44BB00;
+$Red: #BB2222;
+$Orange: #ff5500;
+
+body{
+    margin:0px;
+}
+
+.background{
+    background-color: black;
+    width: 100%;
+    height: 100%;
+    overflow:hidden;
+}
+
+.overlaySquare{
+    background-color: $Red;
+    position: absolute;
+    will-change: width, height;
+    animation: 500ms bigToSmall ease-out;
+
+    &.highlight{
+        background-color: $Green;
+    }
+}
+
+@keyframes bigToSmall {
+    0%{
+        transform: scale(2);
+    }
+
+    100%{
+        transform: scale (1);
+    }
+}
+
+.boundaryOverlay{
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    top: 0px;
+    left: 0px;
+    pointer-events: none;
+}
+
+.boundaryRectangle{
+    fill-opacity: 0;
+    stroke: gray;
+    stroke-width: 2px;
+    stroke-opacity: .2;
+    animation: fadeInSvg 1s;
+}
+
+.greenCircle{
+    stroke-width: 1px;
+    stroke: $Green;
+    fill-opacity: 0;
+}
+
+@keyframes fadeInSvg{
+    0%{
+        stroke-opacity: 0;
+    }
+
+    100%{
+        stroke-opacity: .2;
+    }
+}
+
+.scoreBoard{
+    position: absolute;
+    top:20px;
+    left: 20px;
+    display:flex;
+    flex-direction: column;
+
+    .row{
+        width: 100%;
+        font-size: 30px;
+        font-weight: 600;
+        display: flex;
+
+        &.green{
+            color: $Green;
+        }
+
+        &.red{
+            color: $Red;
+        }
+
+        &.orange{
+            color: $Orange;
+        }
+
+        .member{
+            margin-right: 3px;
+
+        }
+    }
+}
+
