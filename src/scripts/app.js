@@ -1,6 +1,7 @@
 import { QuadTree } from "./quadTree/quadTree.js";
 export class QuadTreeDemo {
     constructor() {
+        var _a, _b;
         this.squareSize = 10;
         this.totalNumPoints = 0;
         this.preventMouseEvent = false;
@@ -8,11 +9,8 @@ export class QuadTreeDemo {
         this.width = document.body.clientWidth;
         this.quadTree = new QuadTree(this.width, this.height, 4);
         this.radius = this.width / 10;
-        this.highlightedPoints = [];
-        this.grid = [];
-        for (let i = 0; i < this.width; i += this.squareSize) {
-            this.grid[i] = [];
-        }
+        this.greenHighlightedPoints = [];
+        this.orangeHighlightedPoints = [];
         this.boundaryOverlay = document.getElementById("boundaryOverlay");
         this.background = document.getElementById("background");
         this.userOverlay = document.getElementById("userOverlay");
@@ -24,11 +22,13 @@ export class QuadTreeDemo {
         this.background.addEventListener("mousedown", this.onClick.bind(this));
         this.background.addEventListener("mousemove", this.onMouseMove.bind(this));
         this.background.addEventListener("contextmenu", this.stopEvent.bind(this));
+        (_a = document.getElementById("circleSizeInput")) === null || _a === void 0 ? void 0 : _a.addEventListener("input", this.onChangeSearchRadius.bind(this));
+        (_b = document.getElementById("resetButton")) === null || _b === void 0 ? void 0 : _b.addEventListener("click", this.onResetClick.bind(this));
     }
     onClick(event) {
-        this.clearHighlights(this.highlightedPoints);
-        const x = Math.floor(event.clientX / this.squareSize) * this.squareSize;
-        const y = Math.floor(event.clientY / this.squareSize) * this.squareSize;
+        this.clearHighlights();
+        const x = event.clientX;
+        const y = event.clientY;
         if (event.button === 2) // right-click
          {
             this.findNearbyPoints(x, y, this.radius);
@@ -40,13 +40,31 @@ export class QuadTreeDemo {
         event.stopPropagation();
     }
     onMouseMove(event) {
-        const x = Math.floor(event.clientX / this.squareSize) * this.squareSize;
-        const y = Math.floor(event.clientY / this.squareSize) * this.squareSize;
+        // const x = Math.floor(event.clientX / this.squareSize) * this.squareSize + (this.squareSize / 2);
+        // const y = Math.floor(event.clientY / this.squareSize) * this.squareSize + (this.squareSize / 2);
+        const x = event.clientX;
+        const y = event.clientY;
         if (event.buttons === 1 && !this.preventMouseEvent) {
             this.placeNewPoint(x, y);
             this.preventMouseEvent = true;
-            setTimeout(() => { this.preventMouseEvent = false; }, 40);
+            setTimeout(() => { this.preventMouseEvent = false; }, 20);
         }
+    }
+    onChangeSearchRadius(event) {
+        this.radius = Number(event.currentTarget.value);
+    }
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    onResetClick(_event) {
+        this.quadTree = new QuadTree(this.width, this.height, 4);
+        this.boundaryOverlay.innerHTML = "";
+        this.background.innerHTML = "";
+        this.userOverlay.innerHTML = "";
+        this.greenHighlightedPoints = [];
+        this.orangeHighlightedPoints = [];
+        this.totalNumPoints = 0;
+        this.scoreboardDivs.total.innerHTML = "0";
+        this.scoreboardDivs.found.innerHTML = "";
+        this.scoreboardDivs.highlighted.innerHTML = "";
     }
     stopEvent(event) {
         event.preventDefault();
@@ -66,32 +84,41 @@ export class QuadTreeDemo {
         this.userOverlay.appendChild(greenCircle);
         for (const p of pointList) {
             if (this.getDistance(point, p) <= radius) {
-                this.highlightedPoints.push(p.el);
+                this.greenHighlightedPoints.push(p.el);
+            }
+            else {
+                this.orangeHighlightedPoints.push(p.el);
             }
         }
-        this.highlightPoints(this.highlightedPoints);
-        this.scoreboardDivs.highlighted.innerHTML = String(this.highlightedPoints.length);
+        this.highlightPoints(this.greenHighlightedPoints, "green");
+        this.highlightPoints(this.orangeHighlightedPoints, "orange");
+        this.scoreboardDivs.highlighted.innerHTML = String(this.greenHighlightedPoints.length);
     }
-    highlightPoints(elements) {
+    highlightPoints(elements, cssClass) {
         for (const el of elements) {
-            el.classList.add("highlight");
+            el.classList.add(cssClass);
         }
     }
-    clearHighlights(elements) {
+    clearHighlights() {
         this.userOverlay.innerHTML = "";
-        for (const el of elements) {
-            el.classList.remove("highlight");
+        for (const el of this.greenHighlightedPoints) {
+            el.classList.remove("green");
         }
-        this.highlightedPoints = [];
+        for (const el of this.orangeHighlightedPoints) {
+            el.classList.remove("orange");
+        }
+        this.greenHighlightedPoints = [];
+        this.orangeHighlightedPoints = [];
     }
     getDistance(a, b) {
         return Math.sqrt((b.x - a.x) * (b.x - a.x) + (b.y - a.y) * (b.y - a.y));
     }
     placeNewPoint(x, y) {
-        if (this.grid[x][y] === 1) {
-            return;
-        }
-        this.grid[x][y] = 1;
+        // if (this.grid[x][y] === 1)
+        // {
+        //     return;
+        // }
+        //this.grid[x][y] = 1;
         this.totalNumPoints++;
         this.scoreboardDivs.total.innerHTML = String(this.totalNumPoints);
         const newSquare = this.drawSquare(x, y);
@@ -102,8 +129,8 @@ export class QuadTreeDemo {
     drawSquare(x, y) {
         const newSquare = document.createElement("div");
         newSquare.classList.add("overlaySquare");
-        newSquare.style.top = y + "px";
-        newSquare.style.left = x + "px";
+        newSquare.style.top = (y - this.squareSize / 2) + "px";
+        newSquare.style.left = (x - this.squareSize / 2) + "px";
         newSquare.style.width = this.squareSize + "px";
         newSquare.style.height = this.squareSize + "px";
         return newSquare;

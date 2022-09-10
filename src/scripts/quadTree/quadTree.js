@@ -61,7 +61,7 @@ export class QuadTree {
         const count = node.addPoint(point);
         if (count > this.nodeCapacity) {
             const pointsThatNeedRebalancing = node.payload;
-            let parent = node.parentNode;
+            const parent = node.parentNode;
             let nodeToAddTo;
             if (parent == null) {
                 this.root = nodeToAddTo = new ParentNode(this.root.topLeft.x, this.root.topLeft.y, this.root.bottomRight.x, this.root.bottomRight.y);
@@ -78,13 +78,12 @@ export class QuadTree {
                 // recursion, since in theory we may need to rebalance a second time, or maybe even more
                 this.addPointInner(nodeToAddTo, point);
             }
-            // rebalance
         }
     }
     getRelevantLeafNode(root, point) {
         let cur = root;
         while (cur instanceof ParentNode) {
-            for (let child of cur.children) {
+            for (const child of cur.children) {
                 if (child.containsPoint(point)) {
                     cur = child;
                     break;
@@ -94,7 +93,7 @@ export class QuadTree {
         return cur;
     }
     getDataFromOverlappingPoints(topLeft, bottomRight) {
-        let result = [];
+        const result = [];
         this.recursiveHelper(this.root, topLeft, bottomRight, result);
         return result;
     }
@@ -137,7 +136,7 @@ export class QuadTree {
         return result;
     }
     getNewBoundaries() {
-        let result = JSON.parse(JSON.stringify(this.newBoundaries));
+        const result = JSON.parse(JSON.stringify(this.newBoundaries));
         this.newBoundaries = [];
         return result;
     }
