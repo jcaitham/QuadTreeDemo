@@ -106,8 +106,8 @@ export class QuadTree<DataType extends Coordinates>{
 	public constructor(width: number, height: number, nodeCapacity: number)
 	{
 		this.root = new LeafNode<DataType>(0, 0, width, height);
+		this.newBoundaries = [{topLeft: this.root.topLeft, bottomRight: this.root.bottomRight}];
 		this.nodeCapacity = nodeCapacity;
-		this.newBoundaries = [];
 	}
 
 	/**
@@ -116,9 +116,7 @@ export class QuadTree<DataType extends Coordinates>{
 	 */
 	public addPoint(point: DataType)
 	{
-		// add the point to the tree
 		this.addPointInner(this.root, point);
-		// potentially rebalance
 	}
 
 	/**

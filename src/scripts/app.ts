@@ -33,14 +33,6 @@ export class QuadTreeDemo{
 	private preventMouseEvent = false;
 
 	public constructor(){
-		// initialize properties
-		this.height = document.body.clientHeight;
-		this.width = document.body.clientWidth;
-		this.quadTree = new QuadTree(this.width, this.height, 4);
-		this.radius = this.width / 10;
-		this.greenHighlightedPoints = [];
-		this.blueHighlightedPoints = [];
-
 		// retrieve divs for later
 		this.boundaryOverlay = document.getElementById("boundaryOverlay") as Element as SVGElement;
 		this.background = document.getElementById("background") as HTMLDivElement;
@@ -51,6 +43,14 @@ export class QuadTreeDemo{
 			highlighted: document.getElementById("highlightedPointsCounter") as HTMLDivElement
 		};
 
+		// initialize properties
+		this.height = this.background.clientHeight;
+		this.width = this.background.clientWidth;
+		this.quadTree = new QuadTree(this.width, this.height, 4);
+		this.radius = this.width / 15;
+		this.greenHighlightedPoints = [];
+		this.blueHighlightedPoints = [];
+
 		// attach action handlers
 		this.background.addEventListener("mousedown", this.onClick.bind(this));
 		this.background.addEventListener("mousemove", this.onMouseMove.bind(this));
@@ -58,7 +58,15 @@ export class QuadTreeDemo{
 		document.getElementById("circleSizeInput")?.addEventListener("input", this.onChangeSearchRadius.bind(this));
 		document.getElementById("resetButton")?.addEventListener("click", this.onResetClick.bind(this));
 
+		// setup help menu
+		const qMark = document.getElementById("questionMark") as HTMLDivElement;
+		const helpMenu = document.getElementById("helpMenu") as HTMLDivElement;
+		qMark.addEventListener("mouseenter", () => helpMenu.classList.add("show"));
+		qMark.addEventListener("mouseleave", () => helpMenu.classList.remove("show"));
+
 		(document.getElementById("circleSizeInput") as HTMLInputElement).defaultValue = String(this.radius);
+
+		this.drawBoundaries(this.quadTree.getNewBoundaries());
 	}
 
 	/** Handler for clicking on the grid */
@@ -242,11 +250,13 @@ export class QuadTreeDemo{
 	/** Draw a rectangle bounding the provided coordinates */
 	private drawBoundary(boundary: {topLeft: Coordinates, bottomRight: Coordinates})
 	{
-		const width = boundary.bottomRight.x - boundary.topLeft.x;
-		const height = boundary.bottomRight.y - boundary.topLeft.y;
+		const x = Math.max(boundary.topLeft.x, 1);
+		const y = Math.max(boundary.topLeft.y, 1);
+		const width = Math.min(this.width - 2, boundary.bottomRight.x - boundary.topLeft.x);
+		const height = Math.min(this.height - 2, boundary.bottomRight.y - boundary.topLeft.y);
 		const newRect = document.createElementNS("http://www.w3.org/2000/svg","rect");
-		newRect.setAttribute("x", String(boundary.topLeft.x));
-		newRect.setAttribute("y", String(boundary.topLeft.y));
+		newRect.setAttribute("x", String(x));
+		newRect.setAttribute("y", String(y));
 		newRect.setAttribute("width", String(width));
 		newRect.setAttribute("height", String(height));
 		newRect.setAttribute("class", "boundaryRectangle");

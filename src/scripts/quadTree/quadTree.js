@@ -59,17 +59,15 @@ class ParentNode extends Node {
 export class QuadTree {
     constructor(width, height, nodeCapacity) {
         this.root = new LeafNode(0, 0, width, height);
+        this.newBoundaries = [{ topLeft: this.root.topLeft, bottomRight: this.root.bottomRight }];
         this.nodeCapacity = nodeCapacity;
-        this.newBoundaries = [];
     }
     /**
      * Public entry for adding a point to the tree
      * @param point
      */
     addPoint(point) {
-        // add the point to the tree
         this.addPointInner(this.root, point);
-        // potentially rebalance
     }
     /**
      * Private method for adding a new point to the tree.  Handles injecting the point into the correct LeafNode, and rebalancing the tree if necessary
