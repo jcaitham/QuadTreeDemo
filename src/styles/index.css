@@ -19,7 +19,7 @@ body {
 .overlaySquare.green {
   background-color: #44BB00;
 }
-.overlaySquare.orange {
+.overlaySquare.blue {
   background-color: #0088FF;
 }
 
@@ -101,7 +101,7 @@ body {
 .scoreBoard .row.red {
   color: #BB2222;
 }
-.scoreBoard .row.orange {
+.scoreBoard .row.blue {
   color: #0088FF;
 }
 .scoreBoard .row .member {

@@ -1,7 +1,6 @@
-
 $Green: #44BB00;
 $Red: #BB2222;
-$Orange: #0088FF;
+$Blue: #0088FF;
 
 body{
     margin:0px;
@@ -24,8 +23,8 @@ body{
         background-color: $Green;
     }
 
-    &.orange{
-        background-color: $Orange;
+    &.blue{
+        background-color: $Blue;
     }
 }
 
@@ -94,8 +93,8 @@ body{
             color: $Red;
         }
 
-        &.orange{
-            color: $Orange;
+        &.blue{
+            color: $Blue;
         }
 
         .member{

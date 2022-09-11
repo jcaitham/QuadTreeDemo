@@ -4,21 +4,24 @@ class Node {
         this.bottomRight = { x: x2, y: y2 };
         this.parentNode = null;
     }
+    /** Return true if the given coordinate pair exists within the space governed by this node */
     containsPoint(point) {
         return point.x >= this.topLeft.x && point.x < this.bottomRight.x && point.y >= this.topLeft.y && point.y < this.bottomRight.y;
     }
 }
-export class LeafNode extends Node {
+class LeafNode extends Node {
     constructor(x1, y1, x2, y2) {
         super(x1, y1, x2, y2);
         this.payload = [];
     }
+    /** Adds one data point to this node, and returns the total number of data points on the node */
     addPoint(point) {
         this.payload.push(point);
         return this.payload.length;
     }
 }
-export class ParentNode extends Node {
+class ParentNode extends Node {
+    /** Construct a new parent node.  All parent nodes are initialized with 4 child leafNodes.  This is probably not optimal, but it is convenient */
     constructor(x1, y1, x2, y2) {
         super(x1, y1, x2, y2);
         // starts off with 4 leaf nodes
@@ -30,11 +33,13 @@ export class ParentNode extends Node {
         this.addChild(new LeafNode(x1, midwayY, midwayX, y2)); // bottom-left
         this.addChild(new LeafNode(midwayX, midwayY, x2, y2)); // bottom-right
     }
+    /** Add a child node to this parent node */
     addChild(child) {
         child.parentNode = this;
         this.children.push(child);
         return this.children.length;
     }
+    /** Given a child leaf node, loop through this node's children and remove the target node from the children array */
     removeChild(childToRemove) {
         for (let i = 0; i < this.children.length; i++) {
             const child = this.children[i];
@@ -45,41 +50,69 @@ export class ParentNode extends Node {
         }
     }
 }
+/**
+ * Implementation of the quadTree data structure.  Quad tree is used to "index" 2d coordinates, by repeatedly splitting an area into ever smaller sub-areas.
+ * This is represented as a tree structure, in which each node is associated with some subarea.  Each non-leaf node has 4 children, corresponding to the top-left,
+ * top-right, bottom-left, and bottom-right quarters of the parent.  This can repeat many times and divide the space into very small portions.  Leaf nodes
+ * have a list of data points of configurable size.  Given a coordinate, we can quickly find the LeafNode that contains it by traversing the tree
+ */
 export class QuadTree {
     constructor(width, height, nodeCapacity) {
         this.root = new LeafNode(0, 0, width, height);
         this.nodeCapacity = nodeCapacity;
         this.newBoundaries = [];
     }
+    /**
+     * Public entry for adding a point to the tree
+     * @param point
+     */
     addPoint(point) {
         // add the point to the tree
         this.addPointInner(this.root, point);
         // potentially rebalance
     }
+    /**
+     * Private method for adding a new point to the tree.  Handles injecting the point into the correct LeafNode, and rebalancing the tree if necessary
+     * @param root Node to start from - isn't necessarily the overall root, could be a child node as well
+     * @param point the point to add
+     */
     addPointInner(root, point) {
-        const node = this.getRelevantLeafNode(this.root, point);
+        // find the node that should contain point
+        const node = this.getRelevantLeafNode(root, point);
+        // add point to that node
         const count = node.addPoint(point);
+        // if the node now has more points than nodeCapacity, we need to split the node up
         if (count > this.nodeCapacity) {
+            //save off the data points in the node
             const pointsThatNeedRebalancing = node.payload;
             const parent = node.parentNode;
             let nodeToAddTo;
+            // if the node's parent was null, that means we are at the root node.  We will make the root node into a ParentNode
             if (parent == null) {
                 this.root = nodeToAddTo = new ParentNode(this.root.topLeft.x, this.root.topLeft.y, this.root.bottomRight.x, this.root.bottomRight.y);
             }
-            else {
+            else // otherwise, the node's parent was a ParentNode.  We need to remove the node from the parent's list, and replace it with a ParentNode
+             {
                 parent.removeChild(node);
                 nodeToAddTo = new ParentNode(node.topLeft.x, node.topLeft.y, node.bottomRight.x, node.bottomRight.y);
                 parent.addChild(nodeToAddTo);
             }
+            // when we created the new parentNode, we also created some children LeafNodes for it.  We need to push the boundaries of these leafNodes into newBoundaries
             for (const node of nodeToAddTo.children) {
                 this.newBoundaries.push({ topLeft: node.topLeft, bottomRight: node.bottomRight });
             }
+            // Even though we split the node into 4 smaller nodes, it's possible that all of the points from the original node still get placed into the same smaller child node,
+            // so we call this function recursively for each of the node's original payload to handle nested rebalances
             for (point of pointsThatNeedRebalancing) {
-                // recursion, since in theory we may need to rebalance a second time, or maybe even more
                 this.addPointInner(nodeToAddTo, point);
             }
         }
     }
+    /**
+     * Given a point, locate the leaf node that encompasses that point and return it
+     * @param root Node to start from.  Can be the overall tree root, or any other node within it.  This node IS expected to contain the point though
+     * @param point The point (coordinate pair) that we are searching for
+     */
     getRelevantLeafNode(root, point) {
         let cur = root;
         while (cur instanceof ParentNode) {
@@ -92,11 +125,21 @@ export class QuadTree {
         }
         return cur;
     }
+    /**
+     * Given a rectangle defined by two coordinate pairs, find and return the data payload from all nodes which
+     * overlap with that rectangle.
+     */
     getDataFromOverlappingPoints(topLeft, bottomRight) {
         const result = [];
         this.recursiveHelper(this.root, topLeft, bottomRight, result);
         return result;
     }
+    /**
+     * Perform depth first search on the tree, searching for LeafNodes that overlap with the rectangle created by the topLeft/bottomRight coordinate pairs
+     * Places the payloads of all such LeafNodes into the result array
+     * @param curNode Node currently being processed in the DFS traversal
+     * @param result Pointer to an array that will store our list of data payloads
+     */
     recursiveHelper(curNode, topLeft, bottomRight, result) {
         if (!this.hasOverlap(topLeft, bottomRight, curNode)) {
             return;
@@ -112,6 +155,9 @@ export class QuadTree {
             }
         }
     }
+    /**
+     * Returns whether a rectangle defined by the topLeft and bottomRight coordinate pairs has any overlap with the given node
+     */
     hasOverlap(topLeft, bottomRight, node) {
         if (topLeft.x > node.bottomRight.x || bottomRight.x < node.topLeft.x) {
             return false;
@@ -121,6 +167,9 @@ export class QuadTree {
         }
         return true;
     }
+    /**
+     * Returns a list of all nodes, represented as their internal boundary pair
+     */
     getAllBoundaries() {
         const result = [];
         const queue = [this.root];
@@ -135,6 +184,9 @@ export class QuadTree {
         }
         return result;
     }
+    /**
+     * Returns a list of any nodes created since the last call to getNewBoundaries, represented as their internal boundary pair
+     */
     getNewBoundaries() {
         const result = JSON.parse(JSON.stringify(this.newBoundaries));
         this.newBoundaries = [];
