@@ -1,7 +1,6 @@
 import { QuadTree } from "./quadTree/quadTree.js";
 export class QuadTreeDemo {
     constructor() {
-        var _a, _b;
         /** how big each square should be */
         this.squareSize = 10;
         this.totalNumPoints = 0;
@@ -26,8 +25,8 @@ export class QuadTreeDemo {
         this.background.addEventListener("mousedown", this.onClick.bind(this));
         this.background.addEventListener("mousemove", this.onMouseMove.bind(this));
         this.background.addEventListener("contextmenu", this.stopEvent.bind(this));
-        (_a = document.getElementById("circleSizeInput")) === null || _a === void 0 ? void 0 : _a.addEventListener("input", this.onChangeSearchRadius.bind(this));
-        (_b = document.getElementById("resetButton")) === null || _b === void 0 ? void 0 : _b.addEventListener("click", this.onResetClick.bind(this));
+        document.getElementById("circleSizeInput").addEventListener("input", this.onChangeSearchRadius.bind(this));
+        document.getElementById("resetButton").addEventListener("click", this.onResetClick.bind(this));
         // setup help menu
         const qMark = document.getElementById("questionMark");
         const helpMenu = document.getElementById("helpMenu");
@@ -139,6 +138,9 @@ export class QuadTreeDemo {
     }
     /** Place a new point on the board */
     placeNewPoint(x, y) {
+        if (this.quadTree.containsData({ x: x, y: y })) {
+            return;
+        }
         this.totalNumPoints++;
         this.scoreboardDivs.total.innerHTML = String(this.totalNumPoints);
         // construct a new red rectangle

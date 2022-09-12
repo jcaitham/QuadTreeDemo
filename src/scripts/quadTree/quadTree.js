@@ -63,6 +63,19 @@ export class QuadTree {
         this.nodeCapacity = nodeCapacity;
     }
     /**
+     * Checks whether we already have a data entry for the given coordinate pair.  We can't have multiple data points at the exact same position,
+     * because once there are more than nodeCapacity of these overlapping points, we can't sub-divide the tree anymore
+     */
+    containsData(coord) {
+        const node = this.getRelevantLeafNode(this.root, coord);
+        for (const p of node.payload) {
+            if (p.x == coord.x && p.y == coord.y) {
+                return true;
+            }
+        }
+        return false;
+    }
+    /**
      * Public entry for adding a point to the tree
      * @param point
      */
@@ -186,7 +199,7 @@ export class QuadTree {
      * Returns a list of any nodes created since the last call to getNewBoundaries, represented as their internal boundary pair
      */
     getNewBoundaries() {
-        const result = JSON.parse(JSON.stringify(this.newBoundaries));
+        const result = this.newBoundaries;
         this.newBoundaries = [];
         return result;
     }

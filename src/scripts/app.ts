@@ -55,8 +55,8 @@ export class QuadTreeDemo{
 		this.background.addEventListener("mousedown", this.onClick.bind(this));
 		this.background.addEventListener("mousemove", this.onMouseMove.bind(this));
 		this.background.addEventListener("contextmenu", this.stopEvent.bind(this));
-		document.getElementById("circleSizeInput")?.addEventListener("input", this.onChangeSearchRadius.bind(this));
-		document.getElementById("resetButton")?.addEventListener("click", this.onResetClick.bind(this));
+		(document.getElementById("circleSizeInput") as HTMLInputElement).addEventListener("input", this.onChangeSearchRadius.bind(this));
+		(document.getElementById("resetButton") as HTMLButtonElement).addEventListener("click", this.onResetClick.bind(this));
 
 		// setup help menu
 		const qMark = document.getElementById("questionMark") as HTMLDivElement;
@@ -209,6 +209,10 @@ export class QuadTreeDemo{
 	/** Place a new point on the board */
 	private placeNewPoint(x: number, y: number): void
 	{
+		if (this.quadTree.containsData({x: x, y: y}))
+		{
+			return;
+		}
 		this.totalNumPoints++;
 		this.scoreboardDivs.total.innerHTML = String(this.totalNumPoints);
 
