@@ -94,7 +94,7 @@ body {
     stroke-opacity: 1;
   }
 }
-.scoreBoard {
+.scoreboard {
   position: absolute;
   top: 20px;
   left: 20px;
@@ -102,16 +102,16 @@ body {
   flex-direction: column;
   pointer-events: none;
 }
-.scoreBoard .row {
+.scoreboard .row {
   width: 100%;
   font-size: 30px;
   font-weight: 600;
   display: flex;
 }
-.scoreBoard .row .member {
+.scoreboard .row .member {
   margin-right: 3px;
 }
-.scoreBoard .questionMark {
+.scoreboard .questionMark {
   border-radius: 20px;
   border: 2px solid lightgrey;
   color: lightgrey;
@@ -126,7 +126,7 @@ body {
           animation: blink 1s linear 2;
   pointer-events: all;
 }
-.scoreBoard .helpMenu {
+.scoreboard .helpMenu {
   visibility: hidden;
   color: lightgrey;
   font-weight: 200;
@@ -138,7 +138,7 @@ body {
   border-radius: 10px;
   font-family: "Segoe UI", Helvetica, sans-serif;
 }
-.scoreBoard .helpMenu.show {
+.scoreboard .helpMenu.show {
   visibility: visible;
 }
 
