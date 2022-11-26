@@ -1,40 +1,39 @@
-.red {
+.quadTree {
+  position: absolute;
+  top: 0;
+  left: 0;
+}
+.quadTree .red {
   color: #BB2222;
 }
-
-.blue {
+.quadTree .blue {
   color: #0088FF;
 }
-
-.green {
+.quadTree .green {
   color: #44BB00;
 }
-
-body {
+.quadTree body {
   margin: 0px;
 }
-
-.background {
+.quadTree .background {
   background-color: black;
   width: 100%;
   height: 100%;
   overflow: hidden;
 }
-
-.overlaySquare {
+.quadTree .overlaySquare {
   background-color: #BB2222;
   position: absolute;
   will-change: width, height;
   -webkit-animation: 500ms bigToSmall ease-out;
           animation: 500ms bigToSmall ease-out;
 }
-.overlaySquare.green {
+.quadTree .overlaySquare.green {
   background-color: #44BB00;
 }
-.overlaySquare.blue {
+.quadTree .overlaySquare.blue {
   background-color: #0088FF;
 }
-
 @-webkit-keyframes bigToSmall {
   0% {
     transform: scale(2);
@@ -43,7 +42,6 @@ body {
     transform: scale 1;
   }
 }
-
 @keyframes bigToSmall {
   0% {
     transform: scale(2);
@@ -52,7 +50,7 @@ body {
     transform: scale 1;
   }
 }
-.boundaryOverlay {
+.quadTree .boundaryOverlay {
   position: absolute;
   width: 100%;
   height: 100%;
@@ -60,8 +58,7 @@ body {
   left: 0px;
   pointer-events: none;
 }
-
-.boundaryRectangle {
+.quadTree .boundaryRectangle {
   fill-opacity: 0;
   stroke: rgb(75, 74, 74);
   stroke-width: 2px;
@@ -70,13 +67,11 @@ body {
           animation: fadeInSvg 1s;
   pointer-events: none;
 }
-
-.greenCircle {
+.quadTree .greenCircle {
   stroke-width: 1px;
   stroke: #44BB00;
   fill-opacity: 0;
 }
-
 @-webkit-keyframes fadeInSvg {
   0% {
     stroke-opacity: 0;
@@ -85,7 +80,6 @@ body {
     stroke-opacity: 1;
   }
 }
-
 @keyframes fadeInSvg {
   0% {
     stroke-opacity: 0;
@@ -94,7 +88,7 @@ body {
     stroke-opacity: 1;
   }
 }
-.scoreboard {
+.quadTree .scoreboard {
   position: absolute;
   top: 20px;
   left: 20px;
@@ -102,16 +96,16 @@ body {
   flex-direction: column;
   pointer-events: none;
 }
-.scoreboard .row {
+.quadTree .scoreboard .row {
   width: 100%;
   font-size: 30px;
   font-weight: 600;
   display: flex;
 }
-.scoreboard .row .member {
+.quadTree .scoreboard .row .member {
   margin-right: 3px;
 }
-.scoreboard .questionMark {
+.quadTree .scoreboard .questionMark {
   border-radius: 20px;
   border: 2px solid lightgrey;
   color: lightgrey;
@@ -126,7 +120,7 @@ body {
           animation: blink 1s linear 2;
   pointer-events: all;
 }
-.scoreboard .helpMenu {
+.quadTree .scoreboard .helpMenu {
   visibility: hidden;
   color: lightgrey;
   font-weight: 200;
@@ -138,22 +132,20 @@ body {
   border-radius: 10px;
   font-family: "Segoe UI", Helvetica, sans-serif;
 }
-.scoreboard .helpMenu.show {
+.quadTree .scoreboard .helpMenu.show {
   visibility: visible;
 }
-
 @-webkit-keyframes blink {
   50% {
     transform: scale(1.3);
   }
 }
-
 @keyframes blink {
   50% {
     transform: scale(1.3);
   }
 }
-.controlPanel {
+.quadTree .controlPanel {
   position: absolute;
   bottom: 50px;
   left: 50px;

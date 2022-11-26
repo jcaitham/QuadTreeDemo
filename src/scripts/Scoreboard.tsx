@@ -34,8 +34,8 @@ export class Scoreboard extends React.Component<ScoreboardProps, ScoreboardState
                     <div className="member" id="highlightedPointsCounter">{this.props.green === undefined ? "" : this.props.green}</div>
                 </div>
                 <div className="row questionMark" id="questionMark" 
-                    onPointerEnter={() => this.setState({helpTextClass: "show"})}
-                    onPointerLeave={() => this.setState({helpTextClass: ""})}>
+                    onMouseEnter={() => this.setState({helpTextClass: "show"})}
+                    onMouseLeave={() => this.setState({helpTextClass: ""})}>
                     ?
                 </div>
                 <div className={"row helpMenu " + this.state.helpTextClass} id="helpMenu">

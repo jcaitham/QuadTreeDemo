@@ -17,7 +17,7 @@ export class Scoreboard extends React.Component {
             React.createElement("div", { className: "row green" },
                 React.createElement("div", { className: "member" }, "Highlighted:"),
                 React.createElement("div", { className: "member", id: "highlightedPointsCounter" }, this.props.green === undefined ? "" : this.props.green)),
-            React.createElement("div", { className: "row questionMark", id: "questionMark", onPointerEnter: () => this.setState({ helpTextClass: "show" }), onPointerLeave: () => this.setState({ helpTextClass: "" }) }, "?"),
+            React.createElement("div", { className: "row questionMark", id: "questionMark", onMouseEnter: () => this.setState({ helpTextClass: "show" }), onMouseLeave: () => this.setState({ helpTextClass: "" }) }, "?"),
             React.createElement("div", { className: "row helpMenu " + this.state.helpTextClass, id: "helpMenu" },
                 React.createElement("p", null, "Left-click to add data points to the canvas.  You can click & drag to add them more quickly."),
                 React.createElement("p", null, "Right-click to do a search for all data points within the specified radius. We use a quad tree to do this search efficiently. The grey rectangles drawn on the grid as you add points represent the governance area of different nodes in the quad tree. "),

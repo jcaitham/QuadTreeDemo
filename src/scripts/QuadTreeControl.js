@@ -1,4 +1,5 @@
 import * as ReactDOMClient from 'react-dom/client';
+import React from "react";
 import { QuadTree } from "./quadTree/quadTree.js";
 import { Scoreboard } from "./Scoreboard";
 import "../styles/index.scss";
@@ -9,16 +10,14 @@ export class QuadTreeControl {
         this.totalNumPoints = 0;
         this.preventMouseEvent = false;
         this.scoreboardRoot = null;
-        // retrieve divs for later
+        element.classList.add("quadTree");
         this.boundaryOverlay = document.createElementNS("http://www.w3.org/2000/svg", "svg");
         this.boundaryOverlay.classList.add("boundaryOverlay");
         this.boundaryOverlay.id = "boundaryOverlay";
         element.appendChild(this.boundaryOverlay);
-        //this.background = document.getElementById("background") as HTMLDivElement;
         this.background = document.createElement("div");
         this.background.classList.add("background");
         element.appendChild(this.background);
-        //this.userOverlay = document.getElementById("userOverlay") as Element as SVGElement;
         this.userOverlay = document.createElementNS("http://www.w3.org/2000/svg", "svg");
         this.userOverlay.classList.add("boundaryOverlay");
         element.appendChild(this.userOverlay);
@@ -45,7 +44,7 @@ export class QuadTreeControl {
         if (this.scoreboardRoot === null) {
             this.scoreboardRoot = ReactDOMClient.createRoot(this.scoreboardWrapper);
         }
-        this.scoreboardRoot.render(new Scoreboard({ red: this.scores.red, blue: this.scores.blue, green: this.scores.green }).render());
+        this.scoreboardRoot.render(React.createElement(Scoreboard, { red: this.scores.red, blue: this.scores.blue, green: this.scores.green }));
     }
     buildControlPanel() {
         const wrapper = document.createElement("div");
