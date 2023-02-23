@@ -1,15 +1,17 @@
-import * as ReactDOMClient from 'react-dom/client'
-import React from "react"
+import * as ReactDOMClient from 'react-dom/client';
+import React from "react";
 import { Coordinates, QuadTree } from "./quadTree/quadTree.js";
-import { Scoreboard } from "./Scoreboard";
+import { Scoreboard } from "./Scoreboard.js";
 import "../styles/index.scss";
 
 
-interface TreeContents extends Coordinates{
+interface TreeContents extends Coordinates
+{
 	el: HTMLDivElement;
 }
 
-export class QuadTreeControl{
+export class QuadTreeControl
+{
 
 	/** Backing quadTree data model */
 	private quadTree: QuadTree<TreeContents>;
@@ -33,13 +35,16 @@ export class QuadTreeControl{
 	private blueHighlightedPoints: HTMLDivElement[];
 	private greenHighlightedPoints: HTMLDivElement[];
 
-	private scores: {red: number, blue?: number, green?: number};
+	private scores: { red: number, blue?: number, green?: number; };
 
 	private preventMouseEvent = false;
 
-	private scoreboardRoot: ReactDOMClient.Root | null = null; 
+	private scoreboardRoot: ReactDOMClient.Root | null = null;
 
-	public constructor(element: HTMLElement){
+	private handlers: { [event: string]: EventListener; };
+
+	public constructor(element: HTMLElement)
+	{
 		element.classList.add("quadTree");
 
 		this.boundaryOverlay = document.createElementNS("http://www.w3.org/2000/svg", "svg") as Element as SVGElement;
@@ -60,7 +65,7 @@ export class QuadTreeControl{
 		this.scoreboardWrapper = document.createElement("div");
 		element.appendChild(this.scoreboardWrapper);
 
-		this.scores = {red: 0};
+		this.scores = { red: 0 };
 
 		this.drawScoreboard();
 
@@ -72,14 +77,29 @@ export class QuadTreeControl{
 		this.greenHighlightedPoints = [];
 		this.blueHighlightedPoints = [];
 
+		this.handlers = {};
+		this.handlers["mousedown"] = this.onClick.bind(this) as EventListener;
+		this.handlers["mousemove"] = this.onMouseMove.bind(this) as EventListener;
+		this.handlers["contextmenu"] = this.stopEvent.bind(this) as EventListener;
+
+
 		// attach action handlers
-		this.background.addEventListener("mousedown", this.onClick.bind(this));
-		this.background.addEventListener("mousemove", this.onMouseMove.bind(this));
-		this.background.addEventListener("contextmenu", this.stopEvent.bind(this));
+		for (const event in this.handlers)
+		{
+			this.background.addEventListener(event, this.handlers[event]);
+		}
 
 		element.appendChild(this.buildControlPanel());
 
 		this.drawBoundaries(this.quadTree.getNewBoundaries());
+	}
+
+	public destroy(): void
+	{
+		for (const event in this.handlers)
+		{
+			this.background.removeEventListener(event, this.handlers[event]);
+		}
 	}
 
 	/** Redraw the scoreboard part of the screen */
@@ -89,18 +109,19 @@ export class QuadTreeControl{
 		{
 			this.scoreboardRoot = ReactDOMClient.createRoot(this.scoreboardWrapper);
 		}
-		this.scoreboardRoot.render(<Scoreboard red={this.scores.red} blue={this.scores.blue} green={this.scores.green}/>);
+		this.scoreboardRoot.render(<Scoreboard red={this.scores.red} blue={this.scores.blue} green={this.scores.green} />);
 	}
 
-	private buildControlPanel(): HTMLDivElement{
+	private buildControlPanel(): HTMLDivElement
+	{
 		const wrapper = document.createElement("div");
 		wrapper.classList.add("controlPanel");
 
 		const label = document.createElement("label");
 		label.innerText = "Search Radius";
-		
+
 		const input = document.createElement("input");
-		input.type="range";
+		input.type = "range";
 		input.min = "1";
 		input.max = "1000";
 		input.style.verticalAlign = "middle";
@@ -108,7 +129,7 @@ export class QuadTreeControl{
 		label.appendChild(input);
 
 		const button = document.createElement("button");
-		button.innerText="Reset";
+		button.innerText = "Reset";
 
 		wrapper.appendChild(label);
 		wrapper.appendChild(button);
@@ -136,7 +157,7 @@ export class QuadTreeControl{
 		else if (event.buttons === 1 && !this.preventMouseEvent)  // left-click = place new point
 		{
 			this.placeNewPoint(x, y);
-		}  
+		}
 		this.stopEvent(event);
 	}
 
@@ -150,18 +171,19 @@ export class QuadTreeControl{
 
 			this.placeNewPoint(x, y);
 			this.preventMouseEvent = true;
-			setTimeout(() => {this.preventMouseEvent = false;}, 20);
+			setTimeout(() => { this.preventMouseEvent = false; }, 20);
 		}
 	}
 
 	/** Event handler for moving the search radius slider */
-	private onChangeSearchRadius(event: Event): void{
+	private onChangeSearchRadius(event: Event): void
+	{
 		this.radius = Number((event.currentTarget as HTMLInputElement).value);
 	}
 
 	/** Event handler for clicking the "reset" button.  Clears most of the elements and resets the app state */
-	// eslint-disable-next-line @typescript-eslint/no-unused-vars
-	private onResetClick(_event: Event): void{
+	private onResetClick(_event: Event): void
+	{
 		this.quadTree = new QuadTree(this.width, this.height, 4);
 
 		this.boundaryOverlay.innerHTML = "";
@@ -177,23 +199,25 @@ export class QuadTreeControl{
 	}
 
 	/** Stops a mouse event */
-	private stopEvent(event: MouseEvent): void{
+	private stopEvent(event: MouseEvent): void
+	{
 		event.preventDefault();
-		event.stopPropagation(); 
+		event.stopPropagation();
 	}
 
 	/** Given an x/y coordinate pair and a radius, use the quad tree to find all of the points within that radius */
-	private findNearbyPoints(x: number, y: number, radius: number): void{
-		const point: Coordinates = {x: x, y: y};
-		const topLeft: Coordinates = {x: point.x - radius, y: point.y - radius};
-		const bottomRight: Coordinates = {x: point.x + radius, y: point.y + radius};
+	private findNearbyPoints(x: number, y: number, radius: number): void
+	{
+		const point: Coordinates = { x: x, y: y };
+		const topLeft: Coordinates = { x: point.x - radius, y: point.y - radius };
+		const bottomRight: Coordinates = { x: point.x + radius, y: point.y + radius };
 
 		// QuadTree finds all points that are from nodes that at least partially overlap with the search area
 		const pointList = this.quadTree.getDataFromOverlappingPoints(topLeft, bottomRight);
 		//this.scoreboardDivs.found.innerHTML = String(pointList.length);
 		this.scores.blue = pointList.length;
 
-		const greenCircle = document.createElementNS("http://www.w3.org/2000/svg","circle");
+		const greenCircle = document.createElementNS("http://www.w3.org/2000/svg", "circle");
 		greenCircle.setAttribute("cx", String(x));
 		greenCircle.setAttribute("cy", String(y));
 		greenCircle.setAttribute("r", String(radius));
@@ -224,7 +248,8 @@ export class QuadTreeControl{
 	}
 
 	/** Given a list of points, apply the provided CSS class to all of them */
-	private highlightPoints(elements: HTMLDivElement[], cssClass: string): void{
+	private highlightPoints(elements: HTMLDivElement[], cssClass: string): void
+	{
 		for (const el of elements)
 		{
 			el.classList.add(cssClass);
@@ -232,7 +257,8 @@ export class QuadTreeControl{
 	}
 
 	/** Clear all highlights from the board */
-	private clearHighlights(): void{
+	private clearHighlights(): void
+	{
 		this.userOverlay.innerHTML = "";
 
 		for (const el of this.greenHighlightedPoints)
@@ -253,14 +279,15 @@ export class QuadTreeControl{
 	}
 
 	/** Returns the distance between two points */
-	private getDistance(a: Coordinates, b: Coordinates): number{
+	private getDistance(a: Coordinates, b: Coordinates): number
+	{
 		return Math.sqrt((b.x - a.x) * (b.x - a.x) + (b.y - a.y) * (b.y - a.y));
 	}
 
 	/** Place a new point on the board */
 	private placeNewPoint(x: number, y: number): void
 	{
-		if (this.quadTree.containsData({x: x, y: y}))
+		if (this.quadTree.containsData({ x: x, y: y }))
 		{
 			return;
 		}
@@ -273,7 +300,7 @@ export class QuadTreeControl{
 		this.background.appendChild(newSquare);
 
 		// add the point to the quad tree
-		this.quadTree.addPoint({el: newSquare, x: x, y: y});
+		this.quadTree.addPoint({ el: newSquare, x: x, y: y });
 
 		// add in any new boundaries that the quad tree may have created (in the event of a rebalance)
 		this.drawBoundaries(this.quadTree.getNewBoundaries());
@@ -297,7 +324,7 @@ export class QuadTreeControl{
 
 
 	/** Draws boundary lines */
-	private drawBoundaries(boundaryList: {topLeft: Coordinates, bottomRight: Coordinates}[]): void
+	private drawBoundaries(boundaryList: { topLeft: Coordinates, bottomRight: Coordinates; }[]): void
 	{
 		for (const boundary of boundaryList)
 		{
@@ -306,13 +333,13 @@ export class QuadTreeControl{
 	}
 
 	/** Draw a rectangle bounding the provided coordinates */
-	private drawBoundary(boundary: {topLeft: Coordinates, bottomRight: Coordinates})
+	private drawBoundary(boundary: { topLeft: Coordinates, bottomRight: Coordinates; })
 	{
 		const x = Math.max(boundary.topLeft.x, 1);
 		const y = Math.max(boundary.topLeft.y, 1);
 		const width = Math.min(this.width - 2, boundary.bottomRight.x - boundary.topLeft.x);
 		const height = Math.min(this.height - 2, boundary.bottomRight.y - boundary.topLeft.y);
-		const newRect = document.createElementNS("http://www.w3.org/2000/svg","rect");
+		const newRect = document.createElementNS("http://www.w3.org/2000/svg", "rect");
 		newRect.setAttribute("x", String(x));
 		newRect.setAttribute("y", String(y));
 		newRect.setAttribute("width", String(width));

@@ -1,31 +1,48 @@
 {
-  "name": "quadtreecontrol",
-  "version": "1.0.9",
-  "description": "A quad tree implementation bundled with an interactive front-end",
-  "main": "./dist/index.html",
-  "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
-  },
-  "repository": {  
-    "type": "git",
-    "url": "git+https://github.com/jcaitham/QuadTreeDemo.git"
-  },
-  "author": "Jake Caithamer",
-  "license": "ISC",
-  "bugs": {
-    "url": "https://github.com/jcaitham/QuadTreeDemo/issues"
-  },
-  "homepage": "https://github.com/jcaitham/QuadTreeDemo#readme",
-  "dependencies": {
-    "react": "^18.2.0",
-    "react-dom": "^18.2.0",
-    "react-scripts": "^5.0.1",
-    "sass": "^1.56.1",
-    "ts-loader": "^9.4.1"
-  },
-  "devDependencies": {
-    "@types/react": "^18.0.25",
-    "@types/react-dom": "^18.0.9",
-    "webpack-cli": "^5.0.0"
-  }
+	"name": "quadtreecontrol",
+	"version": "1.1.0",
+	"description": "A quad tree implementation bundled with an interactive front-end",
+	"type": "module",
+	"exports": {
+		".": "./src/QuadTreeDemo.js"
+	},
+	"scripts": {
+		"start": "react-scripts start",
+		"build": "react-scripts build",
+		"test": "react-scripts test",
+		"eject": "react-scripts eject"
+	},
+	"repository": {
+		"type": "git",
+		"url": "git+https://github.com/jcaitham/QuadTreeDemo.git"
+	},
+	"author": "Jake Caithamer",
+	"license": "ISC",
+	"bugs": {
+		"url": "https://github.com/jcaitham/QuadTreeDemo/issues"
+	},
+	"dependencies": {
+		"react": "^18.2.0",
+		"react-dom": "^18.2.0",
+		"react-scripts": "^5.0.1",
+		"sass": "^1.56.1",
+		"ts-loader": "^9.4.1"
+	},
+	"devDependencies": {
+		"@types/react": "^18.0.25",
+		"@types/react-dom": "^18.0.9",
+		"webpack-cli": "^5.0.0"
+	},
+	"browserslist": {
+		"production": [
+			">0.2%",
+			"not dead",
+			"not op_mini all"
+		],
+		"development": [
+			"last 1 chrome version",
+			"last 1 firefox version",
+			"last 1 safari version"
+		]
+	}
 }

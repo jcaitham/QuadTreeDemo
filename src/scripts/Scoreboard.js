@@ -25,7 +25,7 @@ export class Scoreboard extends React.Component {
                     "The ",
                     React.createElement("span", { className: "red" }, "red "),
                     " number above is the total number of points on the canvas.  The ",
-                    React.createElement("span", { className: "blue" }, "blue"),
+                    React.createElement("span", { className: "blue" }, "blue "),
                     "number is the total number of points contained within regions returned by the quad tree - all of these points need to have their distance from the search origin specifically computed. The ",
                     React.createElement("span", { className: "green" }, " green"),
                     " number is the number of points that we actually found within the search radius. "),

@@ -1,7 +1,7 @@
 import * as ReactDOMClient from 'react-dom/client';
 import React from "react";
 import { QuadTree } from "./quadTree/quadTree.js";
-import { Scoreboard } from "./Scoreboard";
+import { Scoreboard } from "./Scoreboard.js";
 import "../styles/index.scss";
 export class QuadTreeControl {
     constructor(element) {
@@ -32,12 +32,21 @@ export class QuadTreeControl {
         this.radius = this.width / 15;
         this.greenHighlightedPoints = [];
         this.blueHighlightedPoints = [];
+        this.handlers = {};
+        this.handlers["mousedown"] = this.onClick.bind(this);
+        this.handlers["mousemove"] = this.onMouseMove.bind(this);
+        this.handlers["contextmenu"] = this.stopEvent.bind(this);
         // attach action handlers
-        this.background.addEventListener("mousedown", this.onClick.bind(this));
-        this.background.addEventListener("mousemove", this.onMouseMove.bind(this));
-        this.background.addEventListener("contextmenu", this.stopEvent.bind(this));
+        for (const event in this.handlers) {
+            this.background.addEventListener(event, this.handlers[event]);
+        }
         element.appendChild(this.buildControlPanel());
         this.drawBoundaries(this.quadTree.getNewBoundaries());
+    }
+    destroy() {
+        for (const event in this.handlers) {
+            this.background.removeEventListener(event, this.handlers[event]);
+        }
     }
     /** Redraw the scoreboard part of the screen */
     drawScoreboard() {
@@ -96,7 +105,6 @@ export class QuadTreeControl {
         this.radius = Number(event.currentTarget.value);
     }
     /** Event handler for clicking the "reset" button.  Clears most of the elements and resets the app state */
-    // eslint-disable-next-line @typescript-eslint/no-unused-vars
     onResetClick(_event) {
         this.quadTree = new QuadTree(this.width, this.height, 4);
         this.boundaryOverlay.innerHTML = "";

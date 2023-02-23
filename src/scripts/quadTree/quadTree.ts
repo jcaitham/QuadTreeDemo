@@ -1,29 +1,33 @@
 
-export interface Coordinates{
+export interface Coordinates
+{
 	x: number;
 	y: number;
 }
 
-abstract class Node{
+abstract class Node
+{
 	public topLeft: Coordinates;
 	public bottomRight: Coordinates;
 	public parentNode: ParentNode | null;
 
 	public constructor(x1: number, y1: number, x2: number, y2: number)
 	{
-		this.topLeft = {x: x1, y: y1};
-		this.bottomRight = {x: x2, y: y2};
+		this.topLeft = { x: x1, y: y1 };
+		this.bottomRight = { x: x2, y: y2 };
 		this.parentNode = null;
 	}
 
 	/** Return true if the given coordinate pair exists within the space governed by this node */
-	public containsPoint(point: Coordinates): boolean{
+	public containsPoint(point: Coordinates): boolean
+	{
 		return point.x >= this.topLeft.x && point.x < this.bottomRight.x && point.y >= this.topLeft.y && point.y < this.bottomRight.y;
 	}
 
 }
 
-class LeafNode<DataType extends Coordinates> extends Node{
+class LeafNode<DataType extends Coordinates> extends Node
+{
 	/** List of data being stored on this node.  Max size is governed by the nodeCapacity property on the QuadTree class */
 	public payload: DataType[];
 	public constructor(x1: number, y1: number, x2: number, y2: number)
@@ -43,7 +47,8 @@ class LeafNode<DataType extends Coordinates> extends Node{
 
 }
 
-class ParentNode extends Node{
+class ParentNode extends Node
+{
 
 	public children: Node[];
 
@@ -72,7 +77,8 @@ class ParentNode extends Node{
 	}
 
 	/** Given a child leaf node, loop through this node's children and remove the target node from the children array */
-	public removeChild(childToRemove: LeafNode<Coordinates>): void{
+	public removeChild(childToRemove: LeafNode<Coordinates>): void
+	{
 		for (let i = 0; i < this.children.length; i++)
 		{
 			const child = this.children[i];
@@ -101,12 +107,12 @@ export class QuadTree<DataType extends Coordinates>{
 	private nodeCapacity: number;
 
 	/** List of newly created node boundaries */
-	private newBoundaries: {topLeft: Coordinates, bottomRight: Coordinates}[];
+	private newBoundaries: { topLeft: Coordinates, bottomRight: Coordinates; }[];
 
 	public constructor(width: number, height: number, nodeCapacity: number)
 	{
 		this.root = new LeafNode<DataType>(0, 0, width, height);
-		this.newBoundaries = [{topLeft: this.root.topLeft, bottomRight: this.root.bottomRight}];
+		this.newBoundaries = [{ topLeft: this.root.topLeft, bottomRight: this.root.bottomRight }];
 		this.nodeCapacity = nodeCapacity;
 	}
 
@@ -114,7 +120,8 @@ export class QuadTree<DataType extends Coordinates>{
 	 * Checks whether we already have a data entry for the given coordinate pair.  We can't have multiple data points at the exact same position, 
 	 * because once there are more than nodeCapacity of these overlapping points, we can't sub-divide the tree anymore 
 	 */
-	public containsData(coord: Coordinates): boolean{
+	public containsData(coord: Coordinates): boolean
+	{
 		const node = this.getRelevantLeafNode(this.root, coord);
 
 		for (const p of node.payload)
@@ -176,7 +183,7 @@ export class QuadTree<DataType extends Coordinates>{
 			// when we created the new parentNode, we also created some children LeafNodes for it.  We need to push the boundaries of these leafNodes into newBoundaries
 			for (const node of nodeToAddTo.children)
 			{
-				this.newBoundaries.push({topLeft: node.topLeft, bottomRight: node.bottomRight});
+				this.newBoundaries.push({ topLeft: node.topLeft, bottomRight: node.bottomRight });
 			}
 
 			// Even though we split the node into 4 smaller nodes, it's possible that all of the points from the original node still get placed into the same smaller child node,
@@ -193,7 +200,8 @@ export class QuadTree<DataType extends Coordinates>{
 	 * @param root Node to start from.  Can be the overall tree root, or any other node within it.  This node IS expected to contain the point though
 	 * @param point The point (coordinate pair) that we are searching for
 	 */
-	private getRelevantLeafNode(root: Node, point: Coordinates): LeafNode<DataType>{
+	private getRelevantLeafNode(root: Node, point: Coordinates): LeafNode<DataType>
+	{
 		let cur = root;
 
 		while (cur instanceof ParentNode)
@@ -271,9 +279,9 @@ export class QuadTree<DataType extends Coordinates>{
 	/**
 	 * Returns a list of all nodes, represented as their internal boundary pair
 	 */
-	public getAllBoundaries(): {topLeft: Coordinates, bottomRight: Coordinates}[]
+	public getAllBoundaries(): { topLeft: Coordinates, bottomRight: Coordinates; }[]
 	{
-		const result: {topLeft: Coordinates, bottomRight: Coordinates}[] = [];
+		const result: { topLeft: Coordinates, bottomRight: Coordinates; }[] = [];
 
 		const queue = [this.root];
 
@@ -281,7 +289,7 @@ export class QuadTree<DataType extends Coordinates>{
 		{
 			const cur = queue.shift() as Node;
 
-			result.push({topLeft: cur.topLeft, bottomRight: cur.bottomRight});
+			result.push({ topLeft: cur.topLeft, bottomRight: cur.bottomRight });
 
 			if (cur instanceof ParentNode)
 			{
@@ -298,7 +306,7 @@ export class QuadTree<DataType extends Coordinates>{
 	/**
 	 * Returns a list of any nodes created since the last call to getNewBoundaries, represented as their internal boundary pair
 	 */
-	public getNewBoundaries(): {topLeft: Coordinates, bottomRight: Coordinates}[]
+	public getNewBoundaries(): { topLeft: Coordinates, bottomRight: Coordinates; }[]
 	{
 		const result = this.newBoundaries;
 		this.newBoundaries = [];
