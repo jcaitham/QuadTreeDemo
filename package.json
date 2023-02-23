@@ -1,6 +1,6 @@
 {
 	"name": "quadtreecontrol",
-	"version": "1.1.0",
+	"version": "1.1.2",
 	"description": "A quad tree implementation bundled with an interactive front-end",
 	"type": "module",
 	"exports": {

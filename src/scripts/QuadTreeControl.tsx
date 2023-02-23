@@ -2,7 +2,7 @@ import * as ReactDOMClient from 'react-dom/client';
 import React from "react";
 import { Coordinates, QuadTree } from "./quadTree/quadTree.js";
 import { Scoreboard } from "./Scoreboard.js";
-import "../styles/index.scss";
+import "../styles/QuadTreeControl.scss";
 
 
 interface TreeContents extends Coordinates

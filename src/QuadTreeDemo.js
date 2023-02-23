@@ -19,5 +19,5 @@ export const QuadTreeDemo = () => {
             ro.observe(containerRef.current);
         }
     }, []);
-    return (React.createElement("div", { style: { width: "100%", height: "100%", overflow: "hidden" }, ref: containerRef }));
+    return (React.createElement("div", { ref: containerRef }));
 };
