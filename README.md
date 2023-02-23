@@ -4,5 +4,5 @@ This project implements a quad-tree data structure, and offers an interactive fr
 
 The interactive front-end allows you to place data points by left-clicking.  The background will gradually split itself into smaller and smaller pieces rectangles, each representing a node in the tree.  By right-clicking, you can find all points within a certain radius of your click point (ala "find all restaurants within 10 miles of my location").  
 
-To use the tool, you can `git clone` and then `npm install` followed by `npm start` to run the project.  Or you use it as a package in your own project, by running `npm install quadtreecontrol@latest`, and then `import {QuadTreeDemo} from "quadtreecontrol".
+To use the tool, you can `git clone` and then `npm install` followed by `npm start` to run the project.  Or you can use it as a package in your own project, by running `npm install quadtreecontrol@latest`, and then `import {QuadTreeDemo} from "quadtreecontrol".
 
